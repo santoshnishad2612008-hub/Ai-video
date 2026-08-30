@@ -12,10 +12,12 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Origin",
     "https://santoshnishad2612008-hub.github.io"
   );
+
   res.header(
     "Access-Control-Allow-Methods",
     "GET,POST,OPTIONS"
   );
+
   res.header(
     "Access-Control-Allow-Headers",
     "Content-Type"
@@ -38,6 +40,7 @@ app.get("/health", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// Generate video
 app.post("/api/generate-video", async (req, res) => {
   try {
     const { prompt } = req.body;
