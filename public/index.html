@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AI Video Generator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b1020;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #252c42;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #7c5cff;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 850px;
+      margin: 35px auto;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span {
+      color: #8b6cff;
+    }
+
+    .hero p {
+      color: #aab2c8;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #151b2e;
+      border: 1px solid #292f45;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      background: #0d1324;
+      color: white;
+      border: 1px solid #343b55;
+      border-radius: 12px;
+      padding: 15px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    textarea:focus {
+      border-color: #7c5cff;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    select {
+      width: 100%;
+      background: #0d1324;
+      color: white;
+      border: 1px solid #343b55;
+      padding: 13px;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .generate {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+      background: #7c5cff;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .generate:hover {
+      opacity: .9;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 30px 10px;
+    }
+
+    .loader {
+      width: 45px;
+      height: 45px;
+      border: 5px solid #343b55;
+      border-top-color: #7c5cff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto auto 15px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .result {
+      display: none;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 14px;
+      background: black;
+      margin-top: 15px;
+    }
+
+    .download {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 13px 20px;
+      background: #20c997;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .notice {
+      color: #aab2c8;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #7f879d;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 29px;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        width: 94%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">AI<span>Video</span></div>
+  <div>🎬</div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>AI <span>Video Generator</span></h1>
+    <p>
+      अपना idea लिखें और AI से video बनाएं।
+      जल्द ही इसमें Text-to-Video और Image-to-Video दोनों features जोड़े जाएंगे।
+    </p>
+  </section>
+
+  <div class="card">
+
+    <label for="prompt">📝 Video Prompt</label>
+
+    <textarea id="prompt"
+      placeholder="उदाहरण: एक सुंदर भारतीय गांव का cinematic दृश्य, सुबह का समय, सूरज की रोशनी, पेड़ और पक्षी..."></textarea>
+
+    <div class="options">
+
+      <div>
+        <label>🎞️ Aspect Ratio</label>
+
+        <select id="ratio">
+          <option value="16:9">16:9 Landscape</option>
+          <option value="9:16">9:16 Portrait</option>
+          <option value="1:1">1:1 Square</option>
+        </select>
+      </div>
+
+      <div>
+        <label>⏱️ Duration</label>
+
+        <select id="duration">
+          <option value="5">5 Seconds</option>
+          <option value="10">10 Seconds</option>
+          <option value="15">15 Seconds</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button class="generate" onclick="generateVideo()">
+      ✨ Generate Video
+    </button>
+
+    <p class="notice">
+      ⚠️ अभी यह demo version है। असली AI video generation के लिए
+      secure backend और AI video API जोड़ना होगा।
+    </p>
+
+  </div>
+
+  <div class="card loading" id="loading">
+
+    <div class="loader"></div>
+
+    <h3>AI video तैयार हो रही है...</h3>
+
+    <p style="color:#aab2c8;margin-top:8px;">
+      कृपया थोड़ा इंतजार करें।
+    </p>
+
+  </div>
+
+  <div class="card result" id="result">
+
+    <h2>🎬 Your Video</h2>
+
+    <video id="video" controls></video>
+
+    <br>
+
+    <a id="download" class="download" download="ai-video.mp4">
+      ⬇️ Download Video
+    </a>
+
+  </div>
+
+</div>
+
+<footer>
+  © 2026 AI Video Generator
+</footer>
+
+
+<script>
+
+async function generateVideo() {
+
+  const prompt = document.getElementById("prompt").value.trim();
+
+  if (!prompt) {
+    alert("कृपया पहले अपना video prompt लिखें।");
+    return;
+  }
+
+  const loading = document.getElementById("loading");
+  const result = document.getElementById("result");
+
+  loading.style.display = "block";
+  result.style.display = "none";
+
+  try {
+
+    const response = await fetch("/api/generate-video", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Video generation failed");
+    }
+
+    /*
+      API response में output URL मिलने पर
+      उसे video player में लगाया जाएगा।
+    */
+
+    const videoUrl =
+      data.output_url ||
+      data.video_url ||
+      data.url;
+
+    if (!videoUrl) {
+      throw new Error("Video URL response में नहीं मिला।");
+    }
+
+    document.getElementById("video").src = videoUrl;
+    document.getElementById("download").href = videoUrl;
+
+    loading.style.display = "none";
+    result.style.display = "block";
+
+  } catch (error) {
+
+    loading.style.display = "none";
+
+    alert("Error: " + error.message);
+
+    console.error(error);
+  }
+}
+
+</script>
+
+</body>
+</html>
