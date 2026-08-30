@@ -319,59 +319,64 @@ async function generateVideo() {
   loading.style.display = "block";
   result.style.display = "none";
 
+try {
+  console.log("Sending request to Render...");
+
+  const response = await fetch(
+    "https://ai-video-generater.onrender.com/api/generate-video",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt
+      })
+    }
+  );
+
+  console.log("Response status:", response.status);
+
+  const text = await response.text();
+  console.log("Server response:", text);
+
+  let data;
+
   try {
-
-    const response = await fetch(
-  "https://ai-video-generater.onrender.com/api/generate-video",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      prompt: prompt
-    })
+    data = JSON.parse(text);
+  } catch {
+    throw new Error("Server ने JSON के बजाय यह भेजा: " + text);
   }
-);
 
-    const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || "Server error: " + response.status);
+  }
 
-    if (!response.ok) {
-      throw new Error(
-        data.error || "Video generation failed."
-      );
-    }
-
-    if (!data.video_url) {
-      throw new Error(
-        "Generated video URL नहीं मिला।"
-      );
-    }
-
-    // Video player
-    video.src = data.video_url;
-
-    // Download button
-    download.href = data.video_url;
-    download.download = "ai-generated-video.mp4";
-
-    loading.style.display = "none";
-    result.style.display = "block";
-
-    video.load();
-
-  } catch (error) {
-
-    loading.style.display = "none";
-
-    alert(
-      "Video generate नहीं हो सकी:\n\n" +
-      error.message
+  if (!data.video_url) {
+    throw new Error(
+      "Server से video_url नहीं मिला। Response: " +
+      JSON.stringify(data)
     );
+  }
 
-    console.error(error);
-  }
-  }
+  video.src = data.video_url;
+  download.href = data.video_url;
+  download.download = "ai-generated-video.mp4";
+
+  loading.style.display = "none";
+  result.style.display = "block";
+  video.load();
+
+} catch (error) {
+  loading.style.display = "none";
+
+  alert(
+    "असली Error:\n\n" +
+    error.message
+  );
+
+  console.error("FULL ERROR:", error);
+    }
 
 
 </script>
