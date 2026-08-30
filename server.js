@@ -29,7 +29,9 @@ app.use((req, res, next) => {
 
   next();
 });
-
+app.get("/", (req, res) => {
+  res.send("AI Video Generator Backend is Working!");
+});
 // Health check
 app.get("/health", (req, res) => {
   res.json({
