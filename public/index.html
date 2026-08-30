@@ -316,25 +316,21 @@ async function generateVideo() {
     console.log("Sending request to Render...");
 
     const response = await fetch(
-      "https://ai-video-generater.onrender.com/api/generate-video",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          prompt: prompt
-        })
-      }
-    );
+  "https://ai-video-generater.onrender.com/api/test",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      test: "hello"
+    })
+  }
+);
 
-    console.log("Response status:", response.status);
+const data = await response.json();
 
-    const text = await response.text();
-
-    console.log("Server response:", text);
-
-    let data;
+alert(JSON.stringify(data));
 
     try {
       data = JSON.parse(text);
