@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+// CORS
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
@@ -13,7 +14,7 @@ app.use((req, res, next) => {
 
   res.header(
     "Access-Control-Allow-Methods",
-    "GET,POST,OPTIONS"
+    "GET, POST, OPTIONS"
   );
 
   res.header(
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
   }
 
   next();
+
 });
 app.use(express.static(path.join(__dirname, "public")));
 
