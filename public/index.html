@@ -296,89 +296,89 @@
 <script>
 async function generateVideo() {
 
-  const prompt =
-    document.getElementById("prompt").value.trim();
+  const prompt = document.getElementById("prompt").value.trim();
 
   if (!prompt) {
     alert("कृपया पहले video prompt लिखें।");
     return;
   }
 
-  const loading =
-    document.getElementById("loading");
-
-  const result =
-    document.getElementById("result");
-
-  const video =
-    document.getElementById("video");
-
-  const download =
-    document.getElementById("download");
+  const loading = document.getElementById("loading");
+  const result = document.getElementById("result");
+  const video = document.getElementById("video");
+  const download = document.getElementById("download");
 
   loading.style.display = "block";
   result.style.display = "none";
 
-try {
-  console.log("Sending request to Render...");
-
-  const response = await fetch(
-    "https://ai-video-generater.onrender.com/api/generate-video",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prompt: prompt
-      })
-    }
-  );
-
-  console.log("Response status:", response.status);
-
-  const text = await response.text();
-  console.log("Server response:", text);
-
-  let data;
-
   try {
-    data = JSON.parse(text);
-  } catch {
-    throw new Error("Server ने JSON के बजाय यह भेजा: " + text);
-  }
 
-  if (!response.ok) {
-    throw new Error(data.error || "Server error: " + response.status);
-  }
+    console.log("Sending request to Render...");
 
-  if (!data.video_url) {
-    throw new Error(
-      "Server से video_url नहीं मिला। Response: " +
-      JSON.stringify(data)
+    const response = await fetch(
+      "https://ai-video-generater.onrender.com/api/generate-video",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: prompt
+        })
+      }
     );
-  }
 
-  video.src = data.video_url;
-  download.href = data.video_url;
-  download.download = "ai-generated-video.mp4";
+    console.log("Response status:", response.status);
 
-  loading.style.display = "none";
-  result.style.display = "block";
-  video.load();
+    const text = await response.text();
 
-} catch (error) {
-  loading.style.display = "none";
+    console.log("Server response:", text);
 
-  alert(
-    "असली Error:\n\n" +
-    error.message
-  );
+    let data;
 
-  console.error("FULL ERROR:", error);
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(
+        "Server ने JSON के बजाय यह भेजा: " + text
+      );
     }
 
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Server error: " + response.status
+      );
+    }
 
+    if (!data.video_url) {
+      throw new Error(
+        "Server से video_url नहीं मिला। Response: " +
+        JSON.stringify(data)
+      );
+    }
+
+    video.src = data.video_url;
+
+    download.href = data.video_url;
+    download.download = "ai-generated-video.mp4";
+
+    loading.style.display = "none";
+    result.style.display = "block";
+
+    video.load();
+
+  } catch (error) {
+
+    loading.style.display = "none";
+
+    alert(
+      "असली Error:\n\n" +
+      error.message
+    );
+
+    console.error("FULL ERROR:", error);
+  }
+}
 </script>
 
 </body>
