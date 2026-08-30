@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.send("AI Video Generator Backend is Working!");
 });
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({
@@ -31,6 +32,13 @@ app.get("/health", (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.post("/api/test", (req, res) => {
+  console.log("TEST REQUEST RECEIVED");
+  res.json({
+    success: true,
+    message: "Frontend to Render connection is working"
+  });
+});
 // Generate video
 app.post("/api/generate-video", async (req, res) => {
   try {
