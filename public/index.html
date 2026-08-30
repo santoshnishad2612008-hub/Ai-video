@@ -294,69 +294,87 @@
 
 
 <script>
-
 async function generateVideo() {
 
-  const prompt = document.getElementById("prompt").value.trim();
+  const prompt =
+    document.getElementById("prompt").value.trim();
 
   if (!prompt) {
-    alert("कृपया पहले अपना video prompt लिखें।");
+    alert("कृपया पहले video prompt लिखें।");
     return;
   }
 
-  const loading = document.getElementById("loading");
-  const result = document.getElementById("result");
+  const loading =
+    document.getElementById("loading");
+
+  const result =
+    document.getElementById("result");
+
+  const video =
+    document.getElementById("video");
+
+  const download =
+    document.getElementById("download");
 
   loading.style.display = "block";
   result.style.display = "none";
 
   try {
 
-    const response = await fetch("/api/generate-video", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prompt: prompt
-      })
-    });
+    const response = await fetch(
+      "/api/generate-video",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          prompt: prompt
+        })
+      }
+    );
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Video generation failed");
+      throw new Error(
+        data.error || "Video generation failed."
+      );
     }
 
-    /*
-      API response में output URL मिलने पर
-      उसे video player में लगाया जाएगा।
-    */
-
-    const videoUrl =
-      data.output_url ||
-      data.video_url ||
-      data.url;
-
-    if (!videoUrl) {
-      throw new Error("Video URL response में नहीं मिला।");
+    if (!data.video_url) {
+      throw new Error(
+        "Generated video URL नहीं मिला।"
+      );
     }
 
-    document.getElementById("video").src = videoUrl;
-    document.getElementById("download").href = videoUrl;
+    // Video player
+    video.src = data.video_url;
+
+    // Download button
+    download.href = data.video_url;
+    download.download = "ai-generated-video.mp4";
 
     loading.style.display = "none";
     result.style.display = "block";
+
+    video.load();
 
   } catch (error) {
 
     loading.style.display = "none";
 
-    alert("Error: " + error.message);
+    alert(
+      "Video generate नहीं हो सकी:\n\n" +
+      error.message
+    );
 
     console.error(error);
   }
-}
+  }
+
 
 </script>
 
