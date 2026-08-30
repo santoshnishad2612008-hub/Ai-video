@@ -197,10 +197,14 @@ function sleep(ms) {
 // Start server
 // ===============================
 
-app.listen(PORT, () => {
-
-  console.log(
-    `AI Video Generator running on port ${PORT}`
-  );
-
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "AI Video Generator backend is running"
+  });
 });
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`AI Video Generator running on 0.0.0.0:${PORT}`);
+});
+
